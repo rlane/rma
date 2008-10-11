@@ -1,3 +1,4 @@
+require 'lib/libs'
 require 'tempfile'
 require 'test/unit'
 require 'test/unit/assertions'
@@ -7,7 +8,12 @@ AS="as --64"
 LD="ld -m elf_x86_64"
 QEMU="qemu-x86_64"
 
-class X86_64Test < Test::Unit::TestCase
+class RMA::X86_64::Test < Test::Unit::TestCase
+
+	def assemble(&b)
+		RMA::X86_64::Assembler.new.assemble &b
+	end
+
 	def run_test(asm, ref)
 		a = Tempfile.new("asm")
 		o = Tempfile.new("obj")

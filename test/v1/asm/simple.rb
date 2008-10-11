@@ -1,4 +1,4 @@
-class V1Test
+class RMA::V1::Test
 
 def test_loop
 	mem = assemble do

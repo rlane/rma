@@ -1,10 +1,16 @@
+require 'lib/libs'
 require 'test/v1/sim'
 require 'arch/v1'
 require 'test/unit'
 require 'test/unit/assertions'
 include Test::Unit::Assertions
 
-class V1Test < Test::Unit::TestCase
+class RMA::V1::Test < Test::Unit::TestCase
+
+	def assemble(&b)
+		RMA::V1::Assembler.new.assemble &b
+	end
+
 	def run_test(mem, regs, in_ports={}, out_ports={})
 		cpu = V1.new(mem, in_ports, out_ports)
 		cpu.cycle while not cpu.halted?

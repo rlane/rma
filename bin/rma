@@ -2,5 +2,5 @@
 require 'arch/v1'
 
 source = ARGF.read
-a = Assembler.new
+a = RMA::V1::Assembler.new
 $stdout.write a.assemble(source)

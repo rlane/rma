@@ -1,9 +1,8 @@
-#!/usr/bin/env ruby
-
+require 'lib/libs'
 # The simulator conveniently provides the argument list for each opcode
 require 'test/v1/sim'
 
-class Assembler
+class RMA::V1::Assembler
 	def initialize
 		clear
 	end

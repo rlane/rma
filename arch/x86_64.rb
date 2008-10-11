@@ -1,4 +1,6 @@
-class Assembler
+require 'lib/libs'
+
+class RMA::X86_64::Assembler
 	def initialize
 		clear
 	end

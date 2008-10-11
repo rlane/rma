@@ -1,6 +1,6 @@
 require 'arch/x86_64'
 
-class X86_64Test
+class RMA::X86_64::Test
 
 def test_ret
 	asm = <<-EOF
@@ -11,7 +11,7 @@ def test_ret
 			syscall
 	EOF
 
-	asm2 = Assembler.new.assemble {
+	asm2 = assemble {
 		literal asm
 	}
 
