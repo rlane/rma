@@ -3,8 +3,8 @@ require 'test/unit'
 require 'test/unit/assertions'
 include Test::Unit::Assertions
 
-AS="x86_64-unknown-linux-as"
-LD="x86_64-unknown-linux-ld"
+AS="as --64"
+LD="ld -m elf_x86_64"
 QEMU="qemu-x86_64"
 
 class X86_64Test < Test::Unit::TestCase
