@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+require 'arch/v1'
+
+source = ARGF.read
+a = Assembler.new
+$stdout.write a.assemble(source)

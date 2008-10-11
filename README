@@ -1,0 +1,2 @@
+RMA is a DSL for generating assembly code. Ruby's block syntax and
+metaprogramming capabilities give it powerful macro functionality.
