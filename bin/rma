@@ -1,6 +1,55 @@
 #!/usr/bin/env ruby
-require 'arch/v1'
+require 'lib/libs'
+require 'ostruct'
+require 'optparse'
+
+RMA::VERSION = '0.1'
+
+options = OpenStruct.new
+options.arch='x86_64'
+
+opts = OptionParser.new do |opts|
+	opts.banner = "rma #{RMA::VERSION}\n" +
+	              "Usage: rma [options] sources"
+	
+	opts.separator ""
+	opts.separator "Options:"
+
+	opts.on('-a architecture', '--arch=architecture', 'Target architecture') do |arch|
+		options.arch = arch
+	end
+
+	opts.on_tail("-h", "--help", "Show help message") do
+		puts opts
+		exit
+	end
+
+	opts.on_tail("-v", "--version", "Show version") do
+		puts "rma " + RMA::VERSION
+		exit
+	end
+end
+ 
+begin
+	opts.parse! ARGV
+rescue OptionParser::InvalidOption, OptionParser::InvalidArgument, OptionParser::MissingArgument => e
+	puts opts
+	puts
+	puts e.message
+	exit(-1)
+end
+
+case options.arch
+	when 'v1'
+		require 'arch/v1'
+		Assembler = RMA::V1::Assembler
+	when 'x86_64'
+		require 'arch/x86_64'
+		Assembler = RMA::X86_64::Assembler
+	else
+		$stderr.puts "Invalid arch #{options.arch.inspect}"
+end
 
 source = ARGF.read
-a = RMA::V1::Assembler.new
+a = Assembler.new
 $stdout.write a.assemble(source)
