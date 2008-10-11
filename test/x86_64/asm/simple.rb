@@ -11,12 +11,11 @@ def test_ret
 			syscall
 	EOF
 
-	asm2 = assemble {
+	bin = assemble {
 		literal asm
 	}
 
-	run_test asm, 42
-	run_test asm2, 42
+	run_test bin, 42
 end
 
 end
