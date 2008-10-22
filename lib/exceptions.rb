@@ -26,3 +26,25 @@ class RMA::LinkerError < RMA::IntermediateError
 		super('Linker', [src])
 	end
 end
+
+class RMA::OperandCountError < Exception
+	def initialize(want, got)
+		@want = want
+		@got = got
+	end
+
+	def to_s
+		"Wrong number of arguments (#{@got} for #{@want})"
+	end
+end
+
+class RMA::OperandTypeError < Exception
+	def initialize(want, got)
+		@want = want
+		@got = got
+	end
+
+	def to_s
+		"Invalid operand #{@got}, expected #{@want}"
+	end
+end
