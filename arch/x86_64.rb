@@ -83,16 +83,19 @@ class RMA::X86_64::Assembler
 
 	def self.op(opcode, *arg_types)
 		define_method opcode do |*args|
+			raise "Wrong number of arguments (#{args.length} for #{arg_types.length})" unless args.length == arg_types.length
+			arg_types.zip(args) do |t,a|
+				raise "Invalid argument #{a}, expected #{t}" unless t === a
+			end
 			inst(opcode, *args)
 		end
 	end
 
-	op 'mov'
-	op 'add'
+	op 'mov', Object, Object
+	op 'add', Object, Object
 	op 'ret'
 	op 'syscall'
-	op 'mov'
-	op 'jmp'
+	op 'jmp', Object
 
 	def label(lbl)
 		literal "#{lbl}:"
