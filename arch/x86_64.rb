@@ -77,21 +77,22 @@ class RMA::X86_64::Assembler
 		@out << "#{x}\n"
 	end
 
-	def op(opcode, *args)
+	def inst(opcode, *args)
 		literal "#{opcode} #{args.map{|x|x.fmt_operand}.join(', ')};"
 	end
 
-	def mov(dst,src)
-		op 'mov', dst, src
+	def self.op(opcode, *arg_types)
+		define_method opcode do |*args|
+			inst(opcode, *args)
+		end
 	end
 
-	def add(dst, src)
-		op 'add', dst, src
-	end
-
-	def ret
-		op 'ret'
-	end
+	op 'mov'
+	op 'add'
+	op 'ret'
+	op 'syscall'
+	op 'mov'
+	op 'jmp'
 
 	def label(lbl)
 		literal "#{lbl}:"
@@ -99,13 +100,5 @@ class RMA::X86_64::Assembler
 
 	def global(lbl)
 		literal ".globl #{lbl}"
-	end
-
-	def syscall
-		op 'syscall'
-	end
-
-	def jmp(lbl)
-		op 'jmp', lbl
 	end
 end
