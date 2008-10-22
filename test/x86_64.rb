@@ -20,8 +20,15 @@ class RMA::X86_64::Test < Test::Unit::TestCase
 		o.write obj
 		o.flush
 
-		system("#{LD} -static -e main -o #{b.path} #{o.path}") or raise 'LD not found'
-		raise 'LD failed' unless $?.exitstatus == 0
+		ret = system("#{LD} -static -e main -o #{b.path} #{o.path}")
+		if not (ret and $?.exitstatus == 0)
+			path = o.path
+			o.unlink
+			o2 = File.new(path, "w")
+			o2.write obj
+			o2.close
+			raise RMA::LinkerError.new(path)
+		end
 
 		system("#{QEMU} #{b.path}")
 
@@ -33,3 +40,4 @@ class RMA::X86_64::Test < Test::Unit::TestCase
 end
 
 require 'test/x86_64/asm/simple'
+require 'test/x86_64/asm/error'

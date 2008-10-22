@@ -35,8 +35,15 @@ class RMA::X86_64::Assembler
 		a.write asm
 		a.flush
 
-		system("#{AS} -o #{o.path} #{a.path}") or raise 'AS not found'
-		raise 'AS failed' unless $?.exitstatus == 0
+		ret = system("#{AS} -o #{o.path} #{a.path}")
+		if not (ret and $?.exitstatus == 0)
+			path = a.path
+			a.unlink
+			a2 = File.new(path, "w")
+			a2.write asm
+			a2.close
+			raise RMA::AssemblerError.new(path)
+		end
 
 		obj = o.read
 
