@@ -3,6 +3,12 @@ require 'tempfile'
 
 AS="as --64"
 
+class Fixnum
+	def fmt_operand
+		"$#{to_s}"
+	end
+end
+
 class RMA::X86_64::Assembler
 	def initialize
 		clear
@@ -36,6 +42,19 @@ class RMA::X86_64::Assembler
 
 	private
 
+	class RegOperand
+		def initialize(name)
+			@name = name
+		end
+
+		def fmt_operand
+			"%#{@name}"
+		end
+	end
+
+	def rax; RegOperand.new 'rax'; end
+	def rdi; RegOperand.new 'rdi'; end
+
 	def clear
 		@out = String.new
 		@next_reg = 1
@@ -46,7 +65,7 @@ class RMA::X86_64::Assembler
 	end
 
 	def op(opcode, *args)
-		literal "#{opcode} #{args.join(', ')};"
+		literal "#{opcode} #{args.map{|x|x.fmt_operand}.join(', ')};"
 	end
 
 	def mov(dst,src)

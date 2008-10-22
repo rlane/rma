@@ -6,8 +6,8 @@ def test_ret
 	bin = assemble {
 		global :main
 		label :main
-		mov '$0x3c', '%rax'
-		mov '$42', '%rdi'
+		mov 0x3c, rax
+		mov 42, rdi
 		syscall
 	}
 
