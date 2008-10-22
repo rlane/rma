@@ -45,4 +45,31 @@ class RMA::X86_64::Assembler
 		@out << "#{x}\n"
 	end
 
+	def op(opcode, *args)
+		literal "#{opcode} #{args.join(', ')};"
+	end
+
+	def mov(dst,src)
+		op 'mov', dst, src
+	end
+
+	def add(dst, src)
+		op 'add', dst, src
+	end
+
+	def ret
+		op 'ret'
+	end
+
+	def label(lbl)
+		literal "#{lbl}:"
+	end
+
+	def global(lbl)
+		literal ".globl #{lbl}"
+	end
+
+	def syscall
+		op 'syscall'
+	end
 end
