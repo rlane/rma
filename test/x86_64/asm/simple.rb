@@ -14,4 +14,19 @@ def test_ret
 	run_test bin, 42
 end
 
+def test_jmp
+	bin = assemble {
+		global :main
+		label :main
+		mov 21, rdi
+		jmp :out
+		mov 13, rdi
+		label :out
+		mov 0x3c, rax
+		syscall
+	}
+
+	run_test bin, 21
+end
+
 end

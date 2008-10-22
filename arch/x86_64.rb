@@ -9,6 +9,12 @@ class Fixnum
 	end
 end
 
+class Symbol
+	def fmt_operand
+		to_s
+	end
+end
+
 class RMA::X86_64::Assembler
 	def initialize
 		clear
@@ -90,5 +96,9 @@ class RMA::X86_64::Assembler
 
 	def syscall
 		op 'syscall'
+	end
+
+	def jmp(lbl)
+		op 'jmp', lbl
 	end
 end
