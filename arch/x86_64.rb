@@ -103,4 +103,6 @@ class RMA::X86_64::Assembler
 end
 
 require 'arch/x86_64/registers'
+require 'arch/x86_64/typechecking'
+require 'arch/x86_64/directives'
 require 'arch/x86_64/instructions'
