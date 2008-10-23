@@ -2,13 +2,24 @@ class RMA::X86_64::Assembler
 
 	## Instruction metaprogramming
 
+	def typecheck(arg_types, args)
+		raise RMA::OperandCountError.new(arg_types.length, args.length) unless args.length == arg_types.length
+		arg_types.zip(args) do |t,a|
+			raise RMA::OperandTypeError.new(t,a) unless t === a
+		end
+	end
+
 	def self.op(opcode, *arg_types)
 		define_method opcode do |*args|
-			raise RMA::OperandCountError.new(arg_types.length, args.length) unless args.length == arg_types.length
-			arg_types.zip(args) do |t,a|
-				raise RMA::OperandTypeError.new(t,a) unless t === a
-			end
+			typecheck(arg_types, args)
 			inst(opcode, *args)
+		end
+	end
+
+	def self.directive(name, *arg_types)
+		define_method name do |*args|
+			typecheck(arg_types, args)
+			literal ".#{name} #{args.join(', ')};"
 		end
 	end
 
@@ -47,10 +58,6 @@ class RMA::X86_64::Assembler
 		literal "#{lbl}:"
 	end
 
-	def global(lbl)
-		literal ".globl #{lbl}"
-	end
-
 	op 'mov', any(Reg, Imm, Mem), any(Reg, Mem)
 	op 'movq', any(Reg, Imm, Mem), any(Reg, Mem)
 	op 'add', any(Reg, Imm, Mem), any(Reg, Mem)
@@ -58,4 +65,8 @@ class RMA::X86_64::Assembler
 	op 'ret'
 	op 'syscall'
 	op 'jmp', Label
+
+	directive 'global', Label
+	directive 'section', String
+	directive 'space', Fixnum
 end

@@ -54,9 +54,9 @@ def test_mem
 		mov 0x3c, rax
 		syscall
 
-		literal '.section .data'
+		section '.data'
 		label :foo
-		literal '.space 128'
+		space 128
 	}
 
 	run_test bin, 7

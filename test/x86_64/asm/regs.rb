@@ -15,9 +15,9 @@ def test_regs
 		movq M(:acc), rdi
 		mov 0x3c, rax
 		syscall
-		literal '.section .data'
+		section '.data'
 		label :acc
-		literal '.space 8'
+		space 8
 	}
 
 	run_test bin, len

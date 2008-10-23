@@ -15,6 +15,12 @@ class Symbol
 	end
 end
 
+class String
+	def fmt_operand
+		to_s
+	end
+end
+
 class RMA::X86_64::Assembler
 	def initialize
 		clear
