@@ -66,16 +66,33 @@ class RMA::X86_64::Assembler
 	end
 
 	class MemOperand
-		def initialize(base, offset, index, length)
-			@base = base
+		def initialize(offset, base, index, scale)
 			@offset = offset
+			@base = base
 			@index = index
-			@length = length
+			@scale = scale
 		end
+
+		def fmt_operand
+			if @base and @index
+				"#{@offset}(#{@base.fmt_operand}, #{@index.fmt_operand}, #{@scale})"
+			elsif @base
+				"#{@offset}(#{@base.fmt_operand})"
+			elsif @index
+				"#{@offset}(, #{@index.fmt_operand}, #{@scale})"
+			else
+				"#{@offset}"
+			end
+		end
+	end
+
+	def M(offset=0, base=nil, index=nil, scale=1)
+		MemOperand.new(offset, base, index, scale)
 	end
 
 	def rax; RegOperand.new 'rax'; end
 	def rdi; RegOperand.new 'rdi'; end
+	def rcx; RegOperand.new 'rcx'; end
 
 	def clear
 		@out = String.new
@@ -118,8 +135,10 @@ class RMA::X86_64::Assembler
 		UnionType.new(*types)
 	end
 
-	op 'mov', any(Reg, Imm), Reg
-	op 'add', any(Reg, Imm), Reg
+	op 'mov', any(Reg, Imm, Mem), any(Reg, Mem)
+	op 'movq', any(Reg, Imm, Mem), any(Reg, Mem)
+	op 'add', any(Reg, Imm, Mem), any(Reg, Mem)
+	op 'lea', Mem, Reg
 	op 'ret'
 	op 'syscall'
 	op 'jmp', Label
