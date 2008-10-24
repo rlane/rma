@@ -45,7 +45,7 @@ def test_fib
 				m.sys_exit[0]
 			end
 
-			m.function(:fib, [tmp]) do
+			m.function(:fib) do
 				mov arg1, rval
 				cmp 1, rval
 
@@ -76,4 +76,60 @@ def test_fib
 
 end
 
+def test_fastfib
+	testargs = [0,1,2,10]
+
+	testargs.each do |arg|
+		expected = fib(arg)
+
+		bin = assemble {
+			m = addmacros DefaultMacros
+			arg1 = rdi
+			rval = rax
+
+			m.function(:main) do
+				mov arg, arg1
+				call :fib
+				cmp expected, rval
+				m.ifnot(:z) do
+					m.sys_exit[1]
+				end
+				m.sys_exit[0]
+			end
+
+			m.function(:fib) do
+				i = r10
+				j = r13
+				k = r14
+				t = r15
+				mov 1, i
+				mov 0, j
+				mov 1, k
+
+				label :start
+				cmp arg, k
+				jg :out
+
+				mov i, t
+				add j, t
+				mov j, i
+				mov t, j
+
+				add 1, k
+				jmp :start
+				label :out
+
+				m.return[j]
+			end
+		}
+
+		begin
+			run_test bin, 0
+		rescue
+			puts "arg: #{arg}"
+			raise
+		end
+	end
+
+end
 end
