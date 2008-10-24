@@ -47,4 +47,19 @@ DefaultMacros = MacroPackage.new do
 		regs.reverse.each { |reg| pop reg }
 	end
 
+	block_macro(:loop) do |b|
+		l = makelabel
+		label l
+		b.call
+		jmp l
+	end
+
+	block_macro(:while) do |b, cond|
+		l2 = makelabel
+		self.loop do
+			cond.call(l2)
+			b.call
+		end
+		label l2
+	end
 end

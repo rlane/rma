@@ -77,7 +77,7 @@ def test_fib
 end
 
 def test_fastfib
-	testargs = [0,1,2,10]
+	testargs = [0,1,2,10,30]
 
 	testargs.each do |arg|
 		expected = fib(arg)
@@ -104,19 +104,15 @@ def test_fastfib
 				t = r15
 				mov 1, i
 				mov 0, j
-				mov 1, k
+				mov 0, k
 
-				label :start
-				cmp arg, k
-				jg :out
-
-				mov i, t
-				add j, t
-				mov j, i
-				mov t, j
-
-				add 1, k
-				jmp :start
+				cond = lambda { |out| add 1, k; cmp arg, k; jg out }
+				m.while(cond) do
+					mov i, t
+					add j, t
+					mov j, i
+					mov t, j
+				end
 				label :out
 
 				m.return[j]
