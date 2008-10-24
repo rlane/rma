@@ -5,9 +5,9 @@ class RMA::X86_64::Test
 
 def test_ret
 	bin = assemble {
-		macros DefaultMacros
-		entry[:main]
-		exit[42]
+		m = addmacros DefaultMacros
+		m.entry[:main]
+		m.exit[42]
 	}
 
 	run_test bin, 42

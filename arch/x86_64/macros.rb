@@ -1,4 +1,4 @@
-DefaultMacros = lambda do
+DefaultMacros = RMA::X86_64::Assembler.macropackage do
 	macro(:sys) do |n|
 		mov n, rax
 		syscall

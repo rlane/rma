@@ -100,14 +100,41 @@ class RMA::X86_64::Assembler
 		MemOperand.new(offset, base, index, scale)
 	end
 
-	def macros(b)
+	def self.macropackage(&b)
+		MacroPackage.new(&b)
+	end
+
+	def addmacros(m)
+		m.instantiate(self)
+	end
+
+end
+
+class MacroPackage
+	def initialize(&b)
+		@b = b
+	end
+
+	def instantiate(assembler)
+		MacroInstance.new(assembler, &@b)
+	end
+end
+
+class MacroInstance
+	undef syscall, exit
+
+	def initialize(assembler, &b)
+		@assembler = assembler
 		instance_eval &b
+	end
+
+	def method_missing(id, *args)
+		@assembler.send id, *args
 	end
 
 	def macro(name, &b)
 		meta_def(name) { b }
 	end
-
 end
 
 require 'arch/x86_64/registers'
