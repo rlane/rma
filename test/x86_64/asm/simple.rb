@@ -7,7 +7,7 @@ def test_ret
 	bin = assemble {
 		m = addmacros DefaultMacros
 		m.entry[:main]
-		m.exit[42]
+		m.sys_exit[42]
 	}
 
 	run_test bin, 42

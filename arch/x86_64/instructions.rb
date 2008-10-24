@@ -25,4 +25,5 @@ class RMA::X86_64::Assembler
 	op 'ret'
 	op 'syscall'
 	op 'jmp', Label
+	op 'call', Label
 end
