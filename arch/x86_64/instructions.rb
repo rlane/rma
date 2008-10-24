@@ -18,22 +18,26 @@ class RMA::X86_64::Assembler
 		literal "#{lbl}:"
 	end
 
-	op 'mov', any(Reg, Imm, Mem), any(Reg, Mem)
-	op 'movq', any(Reg, Imm, Mem), any(Reg, Mem)
-	op 'add', any(Reg, Imm, Mem), any(Reg, Mem)
-	op 'sub', any(Reg, Imm, Mem), any(Reg, Mem)
-	op 'cmp', any(Reg, Imm), Reg
-	op 'lea', Mem, Reg
-	op 'ret'
-	op 'syscall'
-	op 'jmp', Label
-	op 'call', Label
-	op 'push', any(Reg, Imm)
-	op 'pop', Reg
+	no_arg = lambda { |name| op name }
+	%w(nop ret syscall).each &no_arg
+	%w(cbw cwd cwde).each &no_arg
+	%w(pushf popf pusha popa).each &no_arg
+	%w(stc clc cmc std cld sti cli).each &no_arg
+	%w(mul imul div idiv inc dec).each { |x| op x, any(Reg, Mem) }
+	%w(sal sar shl shr rcl rcr rol ror).each { |x| op x, Imm, Reg }
+	%w(and or xor).each { |x| op x, Reg, Reg }
 
-	%w(jmp je jz jcxz jp jpe jne jnz jecxz jnp jpo 
+	%w(xchg mov movb movw movl movq add adc sub sbb cmp).each do |x|
+		op x, any(Reg, Imm, Mem), any(Reg, Mem)
+	end
+
+	%w(jmp call je jz jcxz jp jpe jne jnz jecxz jnp jpo 
 	   ja jae jb jbe jna jnae jnb jnbe jc jnc jg jge 
 		 jl jle jng jnge jnl jnle jo jno js jns).each do |jmpop|
 		op jmpop, Label
 	end
+
+	op 'lea', Mem, Reg
+	op 'push', Reg
+	op 'pop', Reg
 end
