@@ -41,4 +41,10 @@ DefaultMacros = MacroPackage.new do
 		label l
 	end
 
+	block_macro(:save) do |b, *regs|
+		regs.each { |reg| push reg }
+		b.call
+		regs.reverse.each { |reg| pop reg }
+	end
+
 end

@@ -39,33 +39,29 @@ def test_fib
 				mov arg, arg1
 				call :fib
 				cmp expected, rval
-				jne :fail
+				m.ifnot(:z) do
+					m.sys_exit[1]
+				end
 				m.sys_exit[0]
-				label :fail
-				m.sys_exit[1]
 			end
 
-			# function fib(x)
-			m.function(:fib) do
-				cmp 1, arg1
-				m.if(:le) do
-					# x <= 1
-					m.return[arg1]
+			m.function(:fib, [tmp]) do
+				mov arg1, rval
+				cmp 1, rval
+
+				m.ifnot(:le) do
+					m.save(tmp) do
+						m.save(arg1) do
+							sub 1, arg1
+							call :fib
+							mov rval, tmp
+						end
+						sub 2, arg1
+						call :fib
+						add tmp, rval
+					end
 				end
-				# x > 1
-				push tmp # callee save
-				push arg1
-				# tmp <= fib(x-1)
-				sub 1, arg1
-				call :fib
-				mov rval, tmp
-				# rval <= fib(x-2)
-				pop arg1
-				sub 2, arg1
-				call :fib
-				# return rval + tmp
-				add tmp, rval
-				pop tmp # callee restore
+
 				m.return[rval]
 			end
 		}
