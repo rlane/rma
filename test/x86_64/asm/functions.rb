@@ -48,11 +48,11 @@ def test_fib
 			# function fib(x)
 			m.function(:fib) do
 				cmp 1, arg1
-				jg :greater_than_one
-				# x <= 1
-				m.return[arg1]
+				m.if(:le) do
+					# x <= 1
+					m.return[arg1]
+				end
 				# x > 1
-				label :greater_than_one
 				push tmp # callee save
 				push arg1
 				# tmp <= fib(x-1)

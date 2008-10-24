@@ -24,4 +24,21 @@ DefaultMacros = MacroPackage.new do
 		b.call
 	end
 
+	block_macro(:if) do |b, cond|
+		l = makelabel
+		l2 = makelabel
+		send("j#{cond}", l)
+		jmp l2
+		label l
+		b.call
+		label l2
+	end
+
+	block_macro(:ifnot) do |b, cond|
+		l = makelabel
+		send("j#{cond}", l)
+		b.call
+		label l
+	end
+
 end

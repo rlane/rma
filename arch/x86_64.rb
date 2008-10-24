@@ -63,6 +63,7 @@ class RMA::X86_64::Assembler
 
 	def clear
 		@out = String.new
+		@next_label = 0
 	end
 
 	class RegOperand
@@ -102,6 +103,12 @@ class RMA::X86_64::Assembler
 
 	def addmacros(m)
 		m.instantiate(self)
+	end
+
+	def makelabel
+		l = "__l#{@next_label}"
+		@next_label += 1
+		l.intern
 	end
 end
 
