@@ -35,37 +35,39 @@ def test_fib
 			rval = rax
 			tmp = rbx
 
-			m.entry[:main]
-			mov arg, arg1
-			call :fib
-			cmp expected, rval
-			jne :fail
-			m.sys_exit[0]
-			label :fail
-			m.sys_exit[1]
+			m.function(:main) do
+				mov arg, arg1
+				call :fib
+				cmp expected, rval
+				jne :fail
+				m.sys_exit[0]
+				label :fail
+				m.sys_exit[1]
+			end
 
 			# function fib(x)
-			m.entry[:fib]
-			cmp 1, arg1
-			jg :greater_than_one
-			# x <= 1
-			m.return[arg1]
-			# x > 1
-			label :greater_than_one
-			push tmp # callee save
-			push arg1
-			# tmp <= fib(x-1)
-			sub 1, arg1
-			call :fib
-			mov rval, tmp
-			# rval <= fib(x-2)
-			pop arg1
-			sub 2, arg1
-			call :fib
-			# return rval + tmp
-			add tmp, rval
-			pop tmp # callee restore
-			m.return[rval]
+			m.function(:fib) do
+				cmp 1, arg1
+				jg :greater_than_one
+				# x <= 1
+				m.return[arg1]
+				# x > 1
+				label :greater_than_one
+				push tmp # callee save
+				push arg1
+				# tmp <= fib(x-1)
+				sub 1, arg1
+				call :fib
+				mov rval, tmp
+				# rval <= fib(x-2)
+				pop arg1
+				sub 2, arg1
+				call :fib
+				# return rval + tmp
+				add tmp, rval
+				pop tmp # callee restore
+				m.return[rval]
+			end
 		}
 
 		begin

@@ -1,10 +1,22 @@
 require 'test/unit/assertions'
 include Test::Unit::Assertions
 
+$meta_blocks = {}
+
 class Object # http://whytheluckystiff.net/articles/seeingMetaclassesClearly.html
   def meta_def name, &blk
     (class << self; self; end).instance_eval { define_method name, &blk }
   end
+
+	def meta_block_def name, &blk
+		i = blk.object_id
+		$meta_blocks[i] = blk
+		(class << self; self; end).module_eval <<-EOS
+			def #{name}(*args, &b)
+				$meta_blocks[#{i}].call(b, *args)
+			end
+		EOS
+	end
 end
 
 module Kernel

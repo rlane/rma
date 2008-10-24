@@ -23,5 +23,9 @@ class MacroInstance
 	def macro(name, &b)
 		meta_def(name) { b }
 	end
+
+	def block_macro(name, &b)
+		meta_block_def name, &b
+	end
 end
 

@@ -19,4 +19,9 @@ DefaultMacros = MacroPackage.new do
 		ret
 	end
 
+	block_macro(:function) do |b, name|
+		entry[name]
+		b.call
+	end
+
 end
