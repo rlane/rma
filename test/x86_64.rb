@@ -30,10 +30,19 @@ class RMA::X86_64::Test < Test::Unit::TestCase
 			raise RMA::LinkerError.new(path)
 		end
 
-		system("#{QEMU} #{b.path}")
-
-		ret = $?.exitstatus
-		assert_equal ref, ret
+		begin
+			system("#{QEMU} #{b.path}")
+			ret = $?.exitstatus
+			assert_equal ref, ret
+		rescue
+			path = o.path
+			o.unlink
+			o2 = File.new(path, "w")
+			o2.write obj
+			o2.close
+			$stderr.puts "Emulator failed, output left in #{path}"
+			raise
+		end
 
 		b.close
 	end

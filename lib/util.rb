@@ -1,6 +1,12 @@
 require 'test/unit/assertions'
 include Test::Unit::Assertions
 
+class Object # http://whytheluckystiff.net/articles/seeingMetaclassesClearly.html
+  def meta_def name, &blk
+    (class << self; self; end).instance_eval { define_method name, &blk }
+  end
+end
+
 module Kernel
 
  # Like instace_eval but allows parameters to be passed.

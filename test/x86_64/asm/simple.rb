@@ -1,14 +1,13 @@
 require 'arch/x86_64'
+require 'arch/x86_64/macros'
 
 class RMA::X86_64::Test
 
 def test_ret
 	bin = assemble {
-		global :main
-		label :main
-		mov 0x3c, rax
-		mov 42, rdi
-		syscall
+		macros DefaultMacros
+		entry[:main]
+		exit[42]
 	}
 
 	run_test bin, 42

@@ -100,6 +100,14 @@ class RMA::X86_64::Assembler
 		MemOperand.new(offset, base, index, scale)
 	end
 
+	def macros(b)
+		instance_eval &b
+	end
+
+	def macro(name, &b)
+		meta_def(name) { b }
+	end
+
 end
 
 require 'arch/x86_64/registers'
