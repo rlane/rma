@@ -1,0 +1,4 @@
+m = addmacros DefaultMacros
+
+m.entry[:main]
+m.sys_exit[0]
