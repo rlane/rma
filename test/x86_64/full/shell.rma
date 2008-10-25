@@ -1,4 +1,49 @@
+require 'socket'
 m = addmacros DefaultMacros
+arg1 = rdi
+arg2 = rsi
+arg3 = rdx
+arg4 = rcx
+arg5 = r8
+arg6 = r9
+fd = r13
+fd2 = r14
+
+assert_ok = lambda do
+	return
+	cmp 0, rax
+	l = makelabel
+	jge l
+	m.sys_exit[1]
+	label l
+end
 
 m.entry[:main]
-m.sys_exit[0]
+
+mov Socket::PF_INET, arg1
+mov Socket::SOCK_STREAM, arg2
+m.zero[arg3]
+call :socket
+assert_ok[]
+mov rax, fd
+
+m.loop do
+	mov fd, arg1
+	m.zero arg2, arg3
+	call :accept
+	assert_ok[]
+	mov rax, fd2
+
+	mov fd2, arg1
+	lea M(:data), arg2
+	mov 1, arg3
+	call :write
+	assert_ok[]
+
+	call :close
+	assert_ok[]
+end
+
+label :data
+space 20
+literal '.long 120'

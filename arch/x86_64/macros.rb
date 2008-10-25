@@ -4,10 +4,14 @@ DefaultMacros = MacroPackage.new do
 		syscall
 	end
 
-	macro(:sys_exit) do |val|
-		mov val, rdi if val != rdi
-		sys[60]
+	sys1 = lambda do |num|
+		lambda do |arg1|
+			mov arg1, rdi if arg1 != rdi
+			sys[num]
+		end
 	end
+
+	macro(:sys_exit, &sys1[60])
 
 	macro(:entry) do |lbl|
 		global lbl
@@ -61,5 +65,11 @@ DefaultMacros = MacroPackage.new do
 			b.call
 		end
 		label l2
+	end
+
+	macro(:zero) do |*regs|
+		regs.each do |reg|
+			xor reg, reg
+		end
 	end
 end
