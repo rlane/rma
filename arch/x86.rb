@@ -132,6 +132,12 @@ class RMA::X86::Assembler
 		end
 	end
 
+	def self.make_special_regs(rs)
+		rs.each do |r|
+			define_method(r) { RegOperand.new r }
+		end
+	end
+
 	def self.op(opcode, *arg_types)
 		define_method opcode do |*args|
 			typecheck(arg_types, args)
