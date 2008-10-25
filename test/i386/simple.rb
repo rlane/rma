@@ -6,27 +6,27 @@ def test_ret
 	bin = assemble {
 		m = addmacros DefaultMacros
 		m.entry[:main]
-		m.sys_exit.call(42)
+		m.sys_exit[42]
 	}
 
 	run_test bin, 42
 end
-=begin
+
 def test_jmp
 	bin = assemble {
+		m = addmacros DefaultMacros
 		global :main
 		label :main
-		mov 21, rdi
+		mov 21, ebx
 		jmp :out
-		mov 13, rdi
+		mov 13, ebx
 		label :out
-		mov 0x3c, rax
-		syscall
+		m.sys_exit[ebx]
 	}
 
 	run_test bin, 21
 end
-
+=begin
 def test_mem
 	bin = assemble {
 		global :main
