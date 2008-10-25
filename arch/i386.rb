@@ -16,7 +16,7 @@ class RMA::I386::Assembler < RMA::X86::Assembler
 	make_special_regs %w(gs fs es ds)
 
 	no_arg = lambda { |name| op name }
-	%w(nop ret iret cpuid).each &no_arg
+	%w(nop ret iret cpuid leave).each &no_arg
 	%w(cbw cwd cwde).each &no_arg
 	%w(pushf popf pusha popa).each &no_arg
 	%w(stc clc cmc std cld sti cli).each &no_arg
@@ -36,7 +36,7 @@ class RMA::I386::Assembler < RMA::X86::Assembler
 
 	op 'lea', Mem, Reg
 	op 'push', Reg
-	op 'pushl', any(Imm, Reg)
+	op 'pushl', any(Imm, Reg, Mem)
 	op 'pop', Reg
 	op 'int', Imm
 end

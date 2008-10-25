@@ -77,4 +77,19 @@ DefaultMacros = MacroPackage.new do
 			xor reg, reg
 		end
 	end
+
+	block_macro(:frame) do |b|
+		push ebp
+		mov esp, ebp
+		b.call
+		leave
+	end
+
+	def arg_s(n)
+		M(4 + n*4, esp)
+	end
+
+	def arg_b(n)
+		M(8 + n*4, ebp)
+	end
 end
