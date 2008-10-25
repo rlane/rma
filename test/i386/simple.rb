@@ -2,11 +2,29 @@ require 'arch/i386/macros'
 
 class RMA::I386::Test
 
-def test_ret
+def test_exit
 	bin = assemble {
 		m = addmacros DefaultMacros
 		m.entry[:main]
 		m.sys_exit[42]
+	}
+
+	run_test bin, 42
+end
+
+def test_function
+	bin = assemble {
+		m = addmacros DefaultMacros
+
+		m.function(:main) do
+			call :foo
+			m.sys_exit[eax]
+		end
+
+		m.function(:foo) do
+			mov 42, eax
+			ret
+		end
 	}
 
 	run_test bin, 42

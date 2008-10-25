@@ -36,6 +36,7 @@ class RMA::I386::Assembler < RMA::X86::Assembler
 
 	op 'lea', Mem, Reg
 	op 'push', Reg
+	op 'pushl', any(Imm, Reg)
 	op 'pop', Reg
 	op 'int', Imm
 end
