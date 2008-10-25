@@ -24,12 +24,16 @@ class RMA::X86::Assembler
 		clear
 	end
 
-	def assemble(src=nil, &b)
-		if src
-			instance_eval { eval src }
+	def do_asm(__src=nil, &__b)
+		if __src
+			instance_eval { eval __src }
 		else
-			instance_eval(&b)
+			instance_eval &__b
 		end
+	end
+
+	def assemble(src=nil, &b)
+		do_asm(src, &b)
 		asm = @out
 		clear
 
