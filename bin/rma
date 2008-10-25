@@ -6,7 +6,7 @@ require 'optparse'
 RMA::VERSION = '0.1'
 
 options = OpenStruct.new
-options.arch='x86_64'
+options.arch='i386'
 options.output_file='a.out'
 
 opts = OptionParser.new do |opts|
@@ -48,6 +48,9 @@ case options.arch
 	when 'v1'
 		require 'arch/v1'
 		Assembler = RMA::V1::Assembler
+	when 'i386'
+		require 'arch/i386'
+		Assembler = RMA::I386::Assembler
 	when 'x86_64'
 		require 'arch/x86_64'
 		Assembler = RMA::X86_64::Assembler
