@@ -160,6 +160,7 @@ class RMA::X86::Assembler
 	def typecheck(arg_types, args)
 		raise RMA::OperandCountError.new(arg_types.length, args.length) unless args.length == arg_types.length
 		arg_types.zip(args) do |t,a|
+			a = a.intern if t == Symbol and a.class == String
 			raise RMA::OperandTypeError.new(t,a) unless t === a
 		end
 	end
