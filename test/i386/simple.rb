@@ -26,31 +26,31 @@ def test_jmp
 
 	run_test bin, 21
 end
-=begin
+
 def test_mem
 	bin = assemble {
+		m = addmacros DefaultMacros
 		global :main
 		label :main
 
-		mov 0, rdi
+		mov 0, edi
 
-		movq 1, M(:foo)
-		add M(:foo), rdi
+		movl 1, M(:foo)
+		add M(:foo), edi
 
-		mov 4, rax
-		movq 2, M(:foo, rax)
-		mov 0, rcx
-		mov 1, rax
-		add M(:foo, rcx, rax, 4), rdi
+		mov 4, eax
+		movl 2, M(:foo, eax)
+		mov 0, ecx
+		mov 1, eax
+		add M(:foo, ecx, eax, 4), edi
 
-		lea M(:foo), rax
-		mov 4, rcx
-		movq 4, M(0, rax, rcx, 8)
-		lea M(:foo, nil, rcx, 4), rax
-		add M(0, rax, rcx, 4), rdi
+		lea M(:foo), eax
+		mov 4, ecx
+		movl 4, M(0, eax, ecx, 8)
+		lea M(:foo, nil, ecx, 4), eax
+		add M(0, eax, ecx, 4), edi
 
-		mov 0x3c, rax
-		syscall
+		m.sys_exit[edi]
 
 		section '.data'
 		label :foo
@@ -59,5 +59,5 @@ def test_mem
 
 	run_test bin, 7
 end
-=end
+
 end
