@@ -1,16 +1,16 @@
-require 'arch/x86_64'
+require 'arch/i386'
 require 'tempfile'
 require 'test/unit'
 require 'test/unit/assertions'
 include Test::Unit::Assertions
 
-LD="ld -m elf_x86_64"
-QEMU="qemu-x86_64"
+LD="ld -m elf_i386"
+QEMU="qemu-i386"
 
-class RMA::X86_64::Test < Test::Unit::TestCase
+class RMA::I386::Test < Test::Unit::TestCase
 
 	def assemble(&b)
-		RMA::X86_64::Assembler.new.assemble &b
+		RMA::I386::Assembler.new.assemble &b
 	end
 
 	def run_test(obj, ref)
@@ -48,7 +48,4 @@ class RMA::X86_64::Test < Test::Unit::TestCase
 	end
 end
 
-require 'test/x86_64/simple'
-require 'test/x86_64/error'
-require 'test/x86_64/regs'
-require 'test/x86_64/functions'
+require 'test/i386/simple'

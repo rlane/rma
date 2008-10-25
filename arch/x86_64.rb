@@ -1,119 +1,18 @@
-require 'lib/libs'
-require 'tempfile'
+require 'arch/i386'
 
-AS="as --64"
-
-class Fixnum
-	def fmt_operand
-		"$#{to_s}"
-	end
-end
-
-class Symbol
-	def fmt_operand
-		to_s
-	end
-end
-
-class String
-	def fmt_operand
-		to_s
-	end
-end
-
-class RMA::X86_64::Assembler
+class RMA::X86_64::Assembler < RMA::I386::Assembler
 	def initialize
-		clear
+		super
+		@AS="as --64"
 	end
 
-	def assemble(src=nil, &b)
-		if src
-			instance_eval { eval src }
-		else
-			instance_eval(&b)
-		end
-		asm = @out
-		clear
+	make_regs %w(
+		rax rbx rcx rdx rsi rdi rbp rsp 
+		r8  r9  r10  r11  r12  r13  r14  r15
+		r8d r9d r10d r11d r12d r13d r14d r15d
+		r8w r9w r10w r11w r12w r13w r14w r15w
+		r8b r9b r10b r11b r12b r13b r14b r15b
+	)
 
-		a = Tempfile.new("asm")
-		o = Tempfile.new("obj")
-
-		a.write asm
-		a.flush
-
-		ret = system("#{AS} -o #{o.path} #{a.path}")
-		if not (ret and $?.exitstatus == 0)
-			path = a.path
-			a.unlink
-			a2 = File.new(path, "w")
-			a2.write asm
-			a2.close
-			raise RMA::AssemblerError.new(path)
-		end
-
-		obj = o.read
-
-		a.close
-		o.close
-
-		obj
-	end
-
-	private
-
-	def clear
-		@out = String.new
-		@next_label = 0
-	end
-
-	class RegOperand
-		def initialize(name)
-			@name = name
-		end
-
-		def fmt_operand
-			"%#{@name}"
-		end
-	end
-
-	class MemOperand
-		def initialize(offset, base, index, scale)
-			@offset = offset
-			@base = base
-			@index = index
-			@scale = scale
-		end
-
-		def fmt_operand
-			if @base and @index
-				"#{@offset}(#{@base.fmt_operand}, #{@index.fmt_operand}, #{@scale})"
-			elsif @base
-				"#{@offset}(#{@base.fmt_operand})"
-			elsif @index
-				"#{@offset}(, #{@index.fmt_operand}, #{@scale})"
-			else
-				"#{@offset}"
-			end
-		end
-	end
-
-	def M(offset=0, base=nil, index=nil, scale=1)
-		MemOperand.new(offset, base, index, scale)
-	end
-
-	def addmacros(m)
-		m.instantiate(self)
-	end
-
-	def makelabel
-		l = "__l#{@next_label}"
-		@next_label += 1
-		l.intern
-	end
+	op 'syscall'
 end
-
-require 'arch/x86_64/registers'
-require 'arch/x86_64/typechecking'
-require 'arch/x86_64/directives'
-require 'arch/x86_64/instructions'
-require 'arch/x86_64/macros'

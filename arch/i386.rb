@@ -1,25 +1,20 @@
-class RMA::X86_64::Assembler
-	def self.op(opcode, *arg_types)
-		define_method opcode do |*args|
-			typecheck(arg_types, args)
-			inst(opcode, *args)
-		end
+require 'arch/x86'
+
+class RMA::I386::Assembler < RMA::X86::Assembler
+	def initialize
+		super
+		@AS="as --32"
 	end
 
-	def literal(x)
-		@out << "#{x}\n"
-	end
-
-	def inst(opcode, *args)
-		literal "#{opcode} #{args.map{|x|x.fmt_operand}.join(', ')};"
-	end
-
-	def label(lbl)
-		literal "#{lbl}:"
-	end
+	make_regs %w(
+		   eax ebx ecx edx esi edi ebp esp
+		   ax  bx  cx  dx  si  di  bp  sp
+		   ah  bh  ch  dh
+		   al  bl  cl  dl  sil dil bpl spl
+		  )
 
 	no_arg = lambda { |name| op name }
-	%w(nop ret syscall).each &no_arg
+	%w(nop ret).each &no_arg
 	%w(cbw cwd cwde).each &no_arg
 	%w(pushf popf pusha popa).each &no_arg
 	%w(stc clc cmc std cld sti cli).each &no_arg
@@ -40,4 +35,6 @@ class RMA::X86_64::Assembler
 	op 'lea', Mem, Reg
 	op 'push', Reg
 	op 'pop', Reg
+	op 'int', Imm
 end
+

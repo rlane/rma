@@ -45,6 +45,6 @@ class RMA::OperandTypeError < Exception
 	end
 
 	def to_s
-		"Invalid operand #{@got}, expected #{@want}"
+		"Invalid operand #{@got.inspect} (#{@got.class}), expected #{@want}"
 	end
 end
