@@ -24,16 +24,16 @@ class RMA::X86::Assembler
 		clear
 	end
 
-	def do_asm(__src=nil, &__b)
+	def assemble(__src=nil, &__b)
 		if __src
-			instance_eval { eval __src }
+			instance_eval __src, (ARGF.filename)
 		else
 			instance_eval &__b
 		end
+		output
 	end
 
-	def assemble(src=nil, &b)
-		do_asm(src, &b)
+	def output
 		asm = @out
 		clear
 
@@ -158,7 +158,11 @@ class RMA::X86::Assembler
 
 	def self.op(opcode, *arg_types)
 		define_method opcode do |*args|
-			typecheck(arg_types, args)
+			begin
+				typecheck(arg_types, args)
+			rescue RMA::OperandTypeError, RMA::OperandCountError => e
+				raise e, nil, caller
+			end
 			inst(opcode, *args)
 		end
 	end
@@ -177,9 +181,10 @@ class RMA::X86::Assembler
 
 	def typecheck(arg_types, args)
 		raise RMA::OperandCountError.new(arg_types.length, args.length) unless args.length == arg_types.length
-		arg_types.zip(args) do |t,a|
+		arg_types.zip(args).each_with_index do |x,i|
+			t,a = x
 			a = a.intern if !(t === a) and a.respond_to? :intern and t === a.intern
-			raise RMA::OperandTypeError.new(t,a) unless t === a
+			raise RMA::OperandTypeError.new(t,a,i) unless t === a
 		end
 	end
 
@@ -209,7 +214,11 @@ class RMA::X86::Assembler
 
 	def self.directive(name, *arg_types)
 		define_method name do |*args|
-			typecheck(arg_types, args)
+			begin
+				typecheck(arg_types, args)
+			rescue RMA::OperandTypeError, RMA::OperandCountError => e
+				raise e, nil, caller
+			end
 			literal ".#{name} #{args.join(', ')};"
 		end
 	end

@@ -39,12 +39,15 @@ class RMA::OperandCountError < Exception
 end
 
 class RMA::OperandTypeError < Exception
-	def initialize(want, got)
+	def initialize(want, got, idx)
 		@want = want
 		@got = got
+		@idx = idx
 	end
 
+	Place = %w(first second third fourth)
+
 	def to_s
-		"Invalid operand #{@got.inspect} (#{@got.class}), expected #{@want}"
+		"Invalid #{Place[@idx]} operand #{@got.inspect} (#{@got.class}), expected #{@want}"
 	end
 end
