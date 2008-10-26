@@ -217,4 +217,13 @@ class RMA::X86::Assembler
 	directive 'global', Label
 	directive 'section', String
 	directive 'space', Fixnum
+
+	def self.prefix(name)
+		self.module_eval <<-EOS
+			def #{name}(&b)
+				inst :#{name}
+				yield if b
+			end
+		EOS
+	end
 end

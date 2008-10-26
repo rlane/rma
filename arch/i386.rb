@@ -43,5 +43,13 @@ class RMA::I386::Assembler < RMA::X86::Assembler
 	op 'pushl', any(Imm, Reg, Mem)
 	op 'pop', Reg
 	op 'int', Imm
+
+	op 'incl', any(Reg, Mem)
+	op 'decl', any(Reg, Mem)
+	op 'xadd', any(Reg, Imm, Mem), any(Reg, Mem)
+	op 'cmpxchg', any(Reg, Mem), any(Reg, Mem)
+	op 'invlpg', Mem
+
+	prefix 'lock'
 end
 
