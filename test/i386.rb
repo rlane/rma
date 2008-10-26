@@ -10,7 +10,7 @@ QEMU="qemu-i386"
 class RMA::I386::Test < Test::Unit::TestCase
 
 	def assemble(&b)
-		RMA::I386::Assembler.new.assemble &b
+		RMA::I386::Assembler.new.assemble(&b)
 	end
 
 	def run_test(obj, ref)

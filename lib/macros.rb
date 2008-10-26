@@ -13,7 +13,7 @@ class MacroInstance
 
 	def initialize(assembler, &b)
 		@assembler = assembler
-		instance_eval &b
+		instance_eval(&b)
 	end
 
 	def method_missing(id, *args)

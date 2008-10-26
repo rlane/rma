@@ -26,9 +26,9 @@ class RMA::X86::Assembler
 
 	def assemble(__src=nil, &__b)
 		if __src
-			instance_eval __src, (ARGF.filename)
+			instance_eval(__src, ARGF.filename)
 		else
-			instance_eval &__b
+			instance_eval(&__b)
 		end
 		output
 	end
