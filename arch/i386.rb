@@ -28,7 +28,11 @@ class RMA::I386::Assembler < RMA::X86::Assembler
 		op x, any(Reg, Imm, Mem), any(Reg, Mem)
 	end
 
-	%w(jmp call je jz jcxz jp jpe jne jnz jecxz jnp jpo 
+	%w(jmp call).each do |jmpop|
+		op jmpop, any(Label, Mem, RegIndirect)
+	end
+
+	%w(je jz jcxz jp jpe jne jnz jecxz jnp jpo 
 	   ja jae jb jbe jna jnae jnb jnbe jc jnc jg jge 
 		 jl jle jng jnge jnl jnle jo jno js jns).each do |jmpop|
 		op jmpop, Label

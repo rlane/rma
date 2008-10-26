@@ -111,6 +111,24 @@ class RMA::X86::Assembler
 		MemOperand.new(offset, base, index, scale)
 	end
 
+	class RegIndirectOperand
+		def initialize(r)
+			@r = r
+		end
+
+		def fmt_operand
+			"*#{@r.fmt_operand}"
+		end
+
+		def to_s
+			fmt_operand
+		end
+	end
+
+	def RI(r)
+		RegIndirectOperand.new(r)
+	end
+
 	def addmacros(m)
 		m.instantiate(self)
 	end
@@ -187,6 +205,7 @@ class RMA::X86::Assembler
 	Imm = Fixnum
 	Reg = RegOperand
 	Mem = MemOperand
+	RegIndirect = RegIndirectOperand
 
 	def self.directive(name, *arg_types)
 		define_method name do |*args|
