@@ -56,3 +56,15 @@ def f2i(v)
 	assert(v.is_a?(Float))
 	[v].pack("g").unpack("N")[0]
 end
+
+module BlankSlate
+	def self.new(*save)
+		Class.new do
+			(Kernel.methods - 
+			 Object.methods + 
+			 instance_methods
+			).each { |m| undef_method m unless m =~ /^__/ or save.member? m.intern }
+		end
+	end
+end
+

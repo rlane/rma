@@ -5,8 +5,8 @@ class RMA::X86_64::Test
 def test_ret
 	bin = assemble {
 		m = addmacros DefaultMacros
-		m.entry[:main]
-		m.sys_exit[42]
+		m.entry(:main)
+		m.sys_exit(42)
 	}
 
 	run_test bin, 42

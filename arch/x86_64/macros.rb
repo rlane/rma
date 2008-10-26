@@ -1,34 +1,37 @@
-DefaultMacros = MacroPackage.new do
-	macro(:sys) do |n|
+class DefaultMacros < MacroPackage
+	def sys(n)
 		mov n, rax if n != rax
 		syscall
 	end
 
-	sys1 = lambda do |num|
-		lambda do |arg1|
-			mov arg1, rdi if arg1 != rdi
-			sys[num]
+	def self.make_syscall(name, num, arity)
+		define_method(name) do |*args|
+			arg_regs = [rdi, rsi, rdx, r10, r8, r9]
+			(0...arity).each do |arg_num|
+				mov args[arg_num], arg_regs[arg_num] if args[arg_num] != arg_regs[arg_num]
+			end
+			sys num
 		end
 	end
 
-	macro(:sys_exit, &sys1[60])
+	make_syscall :sys_exit, 60, 1
 
-	macro(:entry) do |lbl|
+	def entry(lbl)
 		global lbl
 		label lbl
 	end
 
-	macro(:return) do |val|
+	def return(val)
 		mov val, rax if val != rax
 		ret
 	end
 
-	block_macro(:function) do |b, name|
-		entry[name]
+	def function(name, &b)
+		entry name
 		b.call
 	end
 
-	block_macro(:if) do |b, cond|
+	def if(cond, &b)
 		l = makelabel
 		l2 = makelabel
 		send("j#{cond}", l)
@@ -38,27 +41,27 @@ DefaultMacros = MacroPackage.new do
 		label l2
 	end
 
-	block_macro(:ifnot) do |b, cond|
+	def ifnot(cond, &b)
 		l = makelabel
 		send("j#{cond}", l)
 		b.call
 		label l
 	end
 
-	block_macro(:save) do |b, *regs|
+	def save(*regs, &b)
 		regs.each { |reg| push reg }
 		b.call
 		regs.reverse.each { |reg| pop reg }
 	end
 
-	block_macro(:loop) do |b|
+	def loop(&b)
 		l = makelabel
 		label l
 		b.call
 		jmp l
 	end
 
-	block_macro(:while) do |b, cond|
+	def while(cond, &b)
 		l2 = makelabel
 		self.loop do
 			cond.call(l2)
@@ -67,9 +70,24 @@ DefaultMacros = MacroPackage.new do
 		label l2
 	end
 
-	macro(:zero) do |*regs|
+	def zero(*regs)
 		regs.each do |reg|
 			xor reg, reg
 		end
+	end
+
+	def frame(&b)
+		push ebp
+		mov esp, ebp
+		b.call
+		leave
+	end
+
+	def arg_s(n)
+		M(4 + n*4, esp)
+	end
+
+	def arg_b(n)
+		M(8 + n*4, ebp)
 	end
 end

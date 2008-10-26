@@ -130,7 +130,7 @@ class RMA::X86::Assembler
 	end
 
 	def addmacros(m)
-		m.instantiate(self)
+		m.new(self)
 	end
 
 	def makelabel

@@ -6,12 +6,12 @@ def test_call
 	bin = assemble {
 		m = addmacros DefaultMacros
 
-		m.entry[:main]
+		m.entry(:main)
 		call :foo
-		m.sys_exit[rax]
+		m.sys_exit(rax)
 
-		m.entry[:foo]
-		m.return[5]
+		m.entry(:foo)
+		m.return(5)
 	}
 
 	run_test bin, 5
@@ -39,9 +39,9 @@ def test_fib
 				call :fib
 				cmp expected, rval
 				m.ifnot(:z) do
-					m.sys_exit[1]
+					m.sys_exit(1)
 				end
-				m.sys_exit[0]
+				m.sys_exit(0)
 			end
 
 			m.function(:fib) do
@@ -61,7 +61,7 @@ def test_fib
 					end
 				end
 
-				m.return[rval]
+				m.return(rval)
 			end
 		}
 
@@ -91,9 +91,9 @@ def test_fastfib
 				call :fib
 				cmp expected, rval
 				m.ifnot(:z) do
-					m.sys_exit[1]
+					m.sys_exit(1)
 				end
-				m.sys_exit[0]
+				m.sys_exit(0)
 			end
 
 			m.function(:fib) do
@@ -114,7 +114,7 @@ def test_fastfib
 				end
 				label :out
 
-				m.return[j]
+				m.return(j)
 			end
 		}
 

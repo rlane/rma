@@ -5,8 +5,8 @@ class RMA::I386::Test
 def test_exit
 	bin = assemble {
 		m = addmacros DefaultMacros
-		m.entry[:main]
-		m.sys_exit[42]
+		m.entry :main
+		m.sys_exit 42
 	}
 
 	run_test bin, 42
@@ -18,7 +18,7 @@ def test_function
 
 		m.function(:main) do
 			call :foo
-			m.sys_exit[eax]
+			m.sys_exit eax
 		end
 
 		m.function(:foo) do
@@ -39,7 +39,7 @@ def test_jmp
 		jmp :out
 		mov 13, ebx
 		label :out
-		m.sys_exit[ebx]
+		m.sys_exit ebx
 	}
 
 	run_test bin, 21
@@ -68,7 +68,7 @@ def test_mem
 		lea M(:foo, nil, ecx, 4), eax
 		add M(0, eax, ecx, 4), edi
 
-		m.sys_exit[edi]
+		m.sys_exit edi
 
 		section '.data'
 		label :foo
