@@ -3,7 +3,7 @@ require 'arch/x86'
 class RMA::I386::Assembler < RMA::X86::Assembler
 	def initialize
 		super
-		@AS="as --32"
+		@AS = 'as --32'
 	end
 
 	make_regs %w(
@@ -13,7 +13,7 @@ class RMA::I386::Assembler < RMA::X86::Assembler
 		   al  bl  cl  dl  sil dil bpl spl
 		  )
 
-	make_special_regs %w(gs fs es ds)
+	make_regs %w(gs fs es ds)
 
 	no_arg = lambda { |name| op name }
 	%w(nop ret iret cpuid leave hlt).each(&no_arg)

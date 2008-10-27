@@ -3,7 +3,7 @@ require 'arch/i386'
 class RMA::X86_64::Assembler < RMA::I386::Assembler
 	def initialize
 		super
-		@AS="as --64"
+		@AS = 'as --64'
 	end
 
 	make_regs %w(

@@ -50,5 +50,4 @@ end
 
 require 'test/x86_64/simple'
 require 'test/x86_64/error'
-require 'test/x86_64/regs'
 require 'test/x86_64/functions'
