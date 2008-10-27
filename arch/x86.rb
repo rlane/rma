@@ -52,6 +52,18 @@ class RMA::X86::Assembler
 		@out << x
 	end
 
+	def literal(x)
+		self << IR::Literal.new(x)
+	end
+
+	def inst(opcode, *args)
+		self << IR::Instruction.new(opcode, args)
+	end
+
+	def label(lbl)
+		self << IR::Label.new(lbl)
+	end
+
 	def makelabel
 		l = "__l#{@next_label}"
 		@next_label += 1
