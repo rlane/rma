@@ -7,6 +7,14 @@ module RMA
 			end
 			module Translator
 			end
+			module IR
+				class Instruction
+				end
+				class Label
+				end
+				class Literal
+				end
+			end
 			module Operands
 				class RegisterOperand
 				end

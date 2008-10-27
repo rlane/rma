@@ -4,6 +4,7 @@ require 'arch/x86/typechecker'
 require 'arch/x86/translator'
 require 'arch/x86/operands'
 require 'arch/x86/assembly'
+require 'arch/x86/ir'
 
 class Fixnum
 	def fmt_operand
@@ -39,15 +40,16 @@ class RMA::X86::Assembler
 
 	def clear
 		@next_label = 0
-		@out = String.new
+		@out = []
 	end
 
 	def assemble(src=nil, &b)
-		Translator.output @AS, @assembly.__assemble__(src, &b)
+		@assembly.__assemble__(src, &b)
+		Translator.output @AS, @out
 	end
 
-	def literal(x)
-		@out << "#{x}\n"
+	def <<(x)
+		@out << x
 	end
 
 	def makelabel

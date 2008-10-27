@@ -1,8 +1,13 @@
 module RMA::X86::Assembler::Translator
-	def self.output as, asm
+	def self.translate(ir)
+		ir.map { |x| x.fmt.chomp+"\n" }.join('')
+	end
+
+	def self.output as, ir
 		a = Tempfile.new("asm")
 		o = Tempfile.new("obj")
 
+		asm = translate ir
 		a.write asm
 		a.flush
 

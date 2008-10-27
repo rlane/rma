@@ -4,6 +4,9 @@ class RMA::X86::Assembler::Assembly
 	extend Forwardable
 	def_delegators :@__assembler__, :makelabel, :literal
 
+	A = RMA::X86::Assembler
+	IR = A::IR
+
 	def self.add_method(name, &b)
 		define_method name, &b
 	end
@@ -28,19 +31,23 @@ class RMA::X86::Assembler::Assembly
 		m.new(self)
 	end
 
+	def literal(x)
+		@__assembler__ << IR::Literal.new(x)
+	end
+
 	def inst(opcode, *args)
-		literal "#{opcode} #{args.map{|x|x.fmt_operand}.join(', ')};"
+		@__assembler__ << IR::Instruction.new(opcode, args)
 	end
 
 	def label(lbl)
-		literal "#{lbl}:"
+		@__assembler__ << IR::Label.new(lbl)
 	end
 
 	def M(offset=0, base=nil, index=nil, scale=1)
-		RMA::X86::Assembler::Mem.new(offset, base, index, scale)
+		A::Mem.new(offset, base, index, scale)
 	end
 
 	def RI(r)
-		RMA::X86::Assembler::RegIndirect.new(r)
+		A::RegIndirect.new(r)
 	end
 end
