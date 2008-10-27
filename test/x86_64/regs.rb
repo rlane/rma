@@ -1,4 +1,4 @@
-require 'arch/x86_64/macros'
+require 'macros/x86_64/basic'
 
 class RMA::X86_64::Test
 

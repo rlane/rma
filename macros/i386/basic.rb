@@ -1,4 +1,4 @@
-class DefaultMacros < MacroPackage
+class BasicMacros < MacroPackage
 	def sys(n)
 		mov n, eax if n != eax
 		int 0x80

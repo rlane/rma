@@ -1,10 +1,10 @@
-require 'arch/x86_64/macros'
+require 'macros/x86_64/basic'
 
 class RMA::X86_64::Test
 
 def test_call
 	bin = assemble {
-		m = addmacros DefaultMacros
+		m = addmacros BasicMacros
 
 		m.entry(:main)
 		call :foo
@@ -29,7 +29,7 @@ def test_fib
 		expected = fib(arg)
 
 		bin = assemble {
-			m = addmacros DefaultMacros
+			m = addmacros BasicMacros
 			arg1 = rdi
 			rval = rax
 			tmp = rbx
@@ -82,7 +82,7 @@ def test_fastfib
 		expected = fib(arg)
 
 		bin = assemble {
-			m = addmacros DefaultMacros
+			m = addmacros BasicMacros
 			arg1 = rdi
 			rval = rax
 

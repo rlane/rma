@@ -1,4 +1,4 @@
-class DefaultMacros < MacroPackage
+class BasicMacros < MacroPackage
 	def sys(n)
 		mov n, rax if n != rax
 		syscall

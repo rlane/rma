@@ -1,10 +1,10 @@
-require 'arch/x86_64/macros'
+require 'macros/x86_64/basic'
 
 class RMA::X86_64::Test
 
 def test_ret
 	bin = assemble {
-		m = addmacros DefaultMacros
+		m = addmacros BasicMacros
 		m.entry(:main)
 		m.sys_exit(42)
 	}

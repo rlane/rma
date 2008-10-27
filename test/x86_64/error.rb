@@ -1,5 +1,3 @@
-require 'arch/x86_64/macros'
-
 class RMA::X86_64::Test
 
 def remove_tmpfile(path)

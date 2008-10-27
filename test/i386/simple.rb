@@ -1,10 +1,10 @@
-require 'arch/i386/macros'
+require 'macros/i386/basic'
 
 class RMA::I386::Test
 
 def test_exit
 	bin = assemble {
-		m = addmacros DefaultMacros
+		m = addmacros BasicMacros
 		m.entry :main
 		m.sys_exit 42
 	}
@@ -14,7 +14,7 @@ end
 
 def test_function
 	bin = assemble {
-		m = addmacros DefaultMacros
+		m = addmacros BasicMacros
 
 		m.function(:main) do
 			call :foo
@@ -32,7 +32,7 @@ end
 
 def test_jmp
 	bin = assemble {
-		m = addmacros DefaultMacros
+		m = addmacros BasicMacros
 		global :main
 		label :main
 		mov 21, ebx
@@ -47,7 +47,7 @@ end
 
 def test_mem
 	bin = assemble {
-		m = addmacros DefaultMacros
+		m = addmacros BasicMacros
 		global :main
 		label :main
 
