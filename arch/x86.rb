@@ -3,6 +3,7 @@ require 'tempfile'
 require 'arch/x86/typechecker'
 require 'arch/x86/translator'
 require 'arch/x86/operands'
+require 'arch/x86/assembly'
 
 class Fixnum
 	def fmt_operand
@@ -32,33 +33,21 @@ class RMA::X86::Assembler
 	attr_accessor :out, :next_label, :as
 
 	def initialize
+		@assembly = Assembly.new(self)
 		clear
 	end
 
 	def clear
-		@out = String.new
 		@next_label = 0
+		@out = String.new
 	end
 
-	def assemble(__src=nil, &__b)
-		if __src
-			instance_eval(__src, ARGF.filename)
-		else
-			instance_eval(&__b)
-		end
-		Translator.output @AS, @out
+	def assemble(src=nil, &b)
+		Translator.output @AS, @assembly.__assemble__(src, &b)
 	end
 
-	def M(offset=0, base=nil, index=nil, scale=1)
-		Mem.new(offset, base, index, scale)
-	end
-
-	def RI(r)
-		RegIndirect.new(r)
-	end
-
-	def addmacros(m)
-		m.new(self)
+	def literal(x)
+		@out << "#{x}\n"
 	end
 
 	def makelabel
@@ -67,26 +56,14 @@ class RMA::X86::Assembler
 		l.intern
 	end
 
-	def literal(x)
-		@out << "#{x}\n"
-	end
-
-	def inst(opcode, *args)
-		literal "#{opcode} #{args.map{|x|x.fmt_operand}.join(', ')};"
-	end
-
-	def label(lbl)
-		literal "#{lbl}:"
-	end
-
 	def self.make_regs(rs)
 		rs.each do |r|
-			define_method(r) { Reg.new r }
+			Assembly.add_method(r) { Reg.new r }
 		end
 	end
 
 	def self.op(opcode, *arg_types)
-		define_method opcode do |*args|
+		Assembly.add_method opcode do |*args|
 			begin
 				Typechecker.typecheck(arg_types, args)
 			rescue RMA::OperandTypeError, RMA::OperandCountError => e
@@ -97,7 +74,7 @@ class RMA::X86::Assembler
 	end
 
 	def self.directive(name, *arg_types)
-		define_method name do |*args|
+		Assembly.add_method name do |*args|
 			begin
 				Typechecker.typecheck(arg_types, args)
 			rescue RMA::OperandTypeError, RMA::OperandCountError => e
@@ -108,7 +85,7 @@ class RMA::X86::Assembler
 	end
 
 	def self.prefix(name)
-		self.module_eval <<-EOS
+		Assembly.send :module_eval, <<-EOS
 			def #{name}(&b)
 				inst :#{name}
 				yield if b
